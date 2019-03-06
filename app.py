@@ -52,3 +52,14 @@ def hello():
 	redis.incr('counter')
 	return 'Hello. This service provides information about games in stock. We see you %s time.' %redis.get('counter')
 
+#Info about games in stock
+@app.route('/games_instock',methods=['GET'])
+def get_games():
+	if(request.args.get('Name','')):
+		games = []
+		for i in games_instock:
+			if(re.search(request.args.get('Name',''), i["Name"], re.IGNORECASE)):
+				games.append(i)
+		return jsonify(games)
+	else:
+		return jsonify(games_instock),200
