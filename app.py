@@ -46,3 +46,9 @@ games_instock = [
 	}
 ]
 
+#Hello function (introducing)
+@app.route('/')
+def hello():
+	redis.incr('counter')
+	return 'Hello. This service provides information about games in stock. We see you %s time.' %redis.get('counter')
+
