@@ -54,7 +54,7 @@ def hello():
 
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
-def get_games():
+def getGames():
 	if(request.args.get('Name','')):
 		games = []
 		for i in games_instock:
@@ -63,3 +63,17 @@ def get_games():
 		return jsonify(games)
 	else:
 		return jsonify(games_instock),200
+
+@app.errorhandler(404)
+def notFound(error):
+	return make_response(jsonify({'error': 'Not Found'}), 404)
+
+#Delete game
+@app.route('/games_instock/<int:game_id>', methods=['DELETE'])
+def deleteGame(game_id):
+	game = [game for game in games_instock if game['ID'] == game_id]
+	games_instock.remove(game[0])
+	return jsonfy(True),200
+
+if __name__== "__main__":
+	app.run(host="0.0.0.0", debug=True)
