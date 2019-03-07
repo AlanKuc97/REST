@@ -5,7 +5,7 @@ import os
 import re 
 
 app = Flask(__name__)
-redis = Redis(host='redis', port =5000)
+redis = Redis(host='redis', port =6379)
 
 games_instock = [
 	{
