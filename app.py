@@ -52,6 +52,12 @@ def hello():
 	redis.incr('counter')
 	return 'Hello. This service provides information about games in stock. We see you %s time.' %redis.get('counter')
 
+#Info about games in stock by ID
+@app.route('/games_instock/<int:game_id>', methods=['GET'])
+def getGame():
+	game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
+	return jsonify(game),200
+
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
 def getGames():
@@ -88,7 +94,7 @@ def addNewGame():
 		'Publisher': request.json['Publisher']
 	}
 	games_instock.append(game)
-	return jsonfy(game),201,{'Location':'/games_instock/'+str(games_instock[-1]['ID'])}
+	return jsonfy(game),200,{'Location': '/games_instock/'+str(games_instock[-1]['ID'])}
 
 #Modifie game attributes
 @app.route('/games_instock/<int:game_id>', methods=['PUT'])
@@ -100,7 +106,7 @@ def modGame(game_id):
 		game[0]['Developer'] = request.json['Developer']
 	if 'Publisher' in request.json:
 		game[0]['Publisher'] = request.json['Publisher']
-	return jsonify({'game':game[0]})
+	return jsonify(game[0]),200
 
 
 if __name__== "__main__":
