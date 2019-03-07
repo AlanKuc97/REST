@@ -64,6 +64,7 @@ def getGames():
 	else:
 		return jsonify(games_instock),200
 
+#Dealing with 404
 @app.errorhandler(404)
 def notFound(error):
 	return make_response(jsonify({'error': 'Not Found'}), 404)
@@ -74,6 +75,33 @@ def deleteGame(game_id):
 	game = [game for game in games_instock if game['ID'] == game_id]
 	games_instock.remove(game[0])
 	return jsonfy(True),200
+
+#Add new game 
+@app.route('/games_instock', methods=['POST'])
+def addNewGame():
+	if not request.json:
+		abort(400)
+	game={
+		'ID': games_instock[-1]['ID'] +1,
+		'Name': request.json['Name'],
+		'Developer': request.json['Developer'],
+		'Publisher': request.json['Publisher']
+	}
+	games_instock.append(game)
+	return jsonfy(game),201,{'Location':'/games_instock/'+str(games_instock[-1]['ID'])}
+
+#Modifie game attributes
+@app.route('/games_instock/<int:game_id>', methods=['PUT'])
+def modGame(game_id):
+	game = [game for game in games_instock if game['ID'] == game_id]
+	if 'Name' in request.json:
+		game[0]['Name'] = request.json['Name']
+	if 'Developer' in request.json:
+		game[0]['Developer'] = request.json['Developer']
+	if 'Publisher' in request.json:
+		game[0]['Publisher'] = request.json['Publisher']
+	return jsonify({'game':game[0]})
+
 
 if __name__== "__main__":
 	app.run(host="0.0.0.0", debug=True)
