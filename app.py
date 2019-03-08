@@ -54,7 +54,7 @@ def hello():
 
 #Info about games in stock by ID
 @app.route('/games_instock/<int:game_id>', methods=['GET'])
-def getGame():
+def getGame(game_id):
 	game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
 	return jsonify(game),200
 
@@ -94,7 +94,7 @@ def addNewGame():
 		'Publisher': request.json['Publisher']
 	}
 	games_instock.append(game)
-	return jsonfy(game),200,{'Location': '/games_instock/'+str(games_instock[-1]['ID'])}
+	return jsonfy(game)
 
 #Modifie game attributes
 @app.route('/games_instock/<int:game_id>', methods=['PUT'])
