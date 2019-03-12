@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, abort, request
 from redis import Redis
 from flask import make_response
-import os 
-import re 
+import os  
 
 app = Flask(__name__)
 redis = Redis(host='redis', port =6379)
