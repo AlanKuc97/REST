@@ -56,31 +56,22 @@ def hello():
 @app.route('/games_instock/<int:game_id>', methods=['GET'])
 def getGame(game_id):
 	game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
-	return jsonify(game),200
+	if(game):
+		return jsonify(game),200
+	else:
+		return "No game with such ID!"
 
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
 def getGames():
-	if(request.args.get('Name','')):
-		games = []
-		for i in games_instock:
-			if(re.search(request.args.get('Name',''), i["Name"], re.IGNORECASE)):
-				games.append(i)
-		return jsonify(games)
-	else:
-		return jsonify(games_instock),200
-
-#Dealing with 404
-@app.errorhandler(404)
-def notFound(error):
-	return make_response(jsonify({'error': 'Not Found'}), 404)
+	return jsonify({'Games':games_instock})
 
 #Delete game
 @app.route('/games_instock/<int:game_id>', methods=['DELETE'])
 def deleteGame(game_id):
 	game = [game for game in games_instock if game['ID'] == game_id]
 	games_instock.remove(game[0])
-	return jsonfy(True),200
+	return getGames() 
 
 #Add new game 
 @app.route('/games_instock', methods=['POST'])
@@ -94,7 +85,7 @@ def addNewGame():
 		'Publisher': request.json['Publisher']
 	}
 	games_instock.append(game)
-	return jsonfy(game)
+	return getGame(games_instock[-1]['ID'])
 
 #Modifie game attributes
 @app.route('/games_instock/<int:game_id>', methods=['PUT'])
@@ -106,7 +97,7 @@ def modGame(game_id):
 		game[0]['Developer'] = request.json['Developer']
 	if 'Publisher' in request.json:
 		game[0]['Publisher'] = request.json['Publisher']
-	return jsonify(game[0]),200
+	return jsonify({'Modified':game[0]}),200
 
 
 if __name__== "__main__":
