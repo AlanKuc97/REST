@@ -57,7 +57,7 @@ def hello():
 def getGame(game_id):
 	game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
 	if(game):
-		return jsonify(game),200
+		return jsonify(game)
 	else:
 		return "No game with such ID!"
 
@@ -97,7 +97,7 @@ def modGame(game_id):
 		game[0]['Developer'] = request.json['Developer']
 	if 'Publisher' in request.json:
 		game[0]['Publisher'] = request.json['Publisher']
-	return jsonify({'Modified':game[0]}),200
+	return jsonify({'Modified':game[0]})
 
 
 if __name__== "__main__":
