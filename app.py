@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, abort, request
 from redis import Redis
-from flask import make_response
 import os  
 
 app = Flask(__name__)
