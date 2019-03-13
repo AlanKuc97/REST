@@ -57,7 +57,7 @@ def getGame(game_id):
 	if(game):
 		return jsonify(game)
 	else:
-		return 404,"Not found ID!"
+		return "Not found ID!",404
 
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
@@ -87,6 +87,20 @@ def addNewGame():
 		return getGame(games_instock[-1]['ID']),201
 	else:
 		return "Bad JSON request",400
+#Patching game
+@app.route('/games_instock/<int:game_id>', methods=['PATCH'])
+def patGame(game_id):
+	game= [game for game in games_instock if game['ID'] == game_id]
+	if(game):
+		if 'Name' in request.json:
+			game[0]['Name'] = request.json['Name']
+		if 'Developer' in request.json:
+			game[0]['Developer'] = request.json['Developer']
+		if 'Publisher' in request.json:
+			game[0]['Publisher'] = request.json['Publisher']
+		return jsonify({'Modified': game[0]}),200
+	else:
+		return "Bad ID",404
 
 #Modifie game attributes
 @app.route('/games_instock/<int:game_id>', methods=['PUT'])
@@ -107,7 +121,7 @@ def modGame(game_id):
 			game[0].pop('Publisher',None)
 		return jsonify({'Modified':game[0]}),200
 	else:
-		return 404,"Not found"
+		return "Not found",404
 
 
 if __name__== "__main__":
