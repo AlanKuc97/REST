@@ -96,15 +96,15 @@ def modGame(game_id):
 		if 'Name' in request.json:
 			game[0]['Name'] = request.json['Name']
 		else:
-			game[0]['Name'] = ""
+			game[0].pop('Name',None)
 		if 'Developer' in request.json:
 			game[0]['Developer'] = request.json['Developer']
 		else:
-			game[0]['Developer'] = ""
+			game[0].pop('Developer',None)
 		if 'Publisher' in request.json:
 			game[0]['Publisher'] = request.json['Publisher']
 		else:
-			game[0]['Publisher'] = ""
+			game[0].pop('Publisher',None)
 		return jsonify({'Modified':game[0]}),200
 	else:
 		return 404,"Not found"
