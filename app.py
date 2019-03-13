@@ -57,7 +57,7 @@ def getGame(game_id):
 	if(game):
 		return jsonify(game)
 	else:
-		return "No game with such ID!"
+		return 404,"Not found ID!"
 
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
@@ -69,33 +69,45 @@ def getGames():
 def deleteGame(game_id):
 	game = [game for game in games_instock if game['ID'] == game_id]
 	games_instock.remove(game[0])
-	return getGames() 
+	return getGames(),200 
 
 #Add new game 
 @app.route('/games_instock', methods=['POST'])
 def addNewGame():
 	if not request.json:
 		abort(400)
-	game={
-		'ID': games_instock[-1]['ID'] +1,
-		'Name': request.json['Name'],
-		'Developer': request.json['Developer'],
-		'Publisher': request.json['Publisher']
-	}
-	games_instock.append(game)
-	return getGame(games_instock[-1]['ID'])
+	if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
+		game={
+			'ID': games_instock[-1]['ID'] +1,
+			'Name': request.json['Name'],
+			'Developer': request.json['Developer'],
+			'Publisher': request.json['Publisher']
+		}
+		games_instock.append(game)
+		return getGame(games_instock[-1]['ID']),201
+	else:
+		return "Bad JSON request",400
 
 #Modifie game attributes
 @app.route('/games_instock/<int:game_id>', methods=['PUT'])
 def modGame(game_id):
 	game = [game for game in games_instock if game['ID'] == game_id]
-	if 'Name' in request.json:
-		game[0]['Name'] = request.json['Name']
-	if 'Developer' in request.json:
-		game[0]['Developer'] = request.json['Developer']
-	if 'Publisher' in request.json:
-		game[0]['Publisher'] = request.json['Publisher']
-	return jsonify({'Modified':game[0]})
+	if(game):
+		if 'Name' in request.json:
+			game[0]['Name'] = request.json['Name']
+		else:
+			game[0]['Name'] = ""
+		if 'Developer' in request.json:
+			game[0]['Developer'] = request.json['Developer']
+		else:
+			game[0]['Developer'] = ""
+		if 'Publisher' in request.json:
+			game[0]['Publisher'] = request.json['Publisher']
+		else:
+			game[0]['Publisher'] = ""
+		return jsonify({'Modified':game[0]}),200
+	else:
+		return 404,"Not found"
 
 
 if __name__== "__main__":
