@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, abort, request
 from redis import Redis
-import os  
-
+import request
+import os
+import copy
 app = Flask(__name__)
 redis = Redis(host='redis', port =6379)
 
@@ -10,37 +11,43 @@ games_instock = [
 		'ID': 1,
 		'Name': 'Assassin\'s Creed 3 ',
 		'Developer': 'Ubisoft Montreal',
-		'Publisher': 'Ubisoft'
+		'Publisher': 'Ubisoft',
+		'Car':1
 	},
 	{
 		'ID': 2,
 		'Name': 'Need for Speed',
 		'Developer': 'Ghost Games',
-		'Publisher': 'Electronic Arts'
+		'Publisher': 'Electronic Arts',
+		'Car':2
 	},
 	{
 		'ID': 3,
 		'Name': 'Call of Duty: WWII',
 		'Developer': 'Sledgehammer Games',
-		'Publisher': 'Activision Blizzard'
+		'Publisher': 'Activision Blizzard',
+		'Car':3
 	},
 	{
 		'ID': 4,
 		'Name': 'Wolfenstein II: The New Colossus',
 		'Developer': 'MachineGames',
-		'Publisher': 'Bethesda Softworks'
+		'Publisher': 'Bethesda Softworks',
+		'Car': 1
 	},
 	{
 		'ID': 5,
 		'Name': 'Cyberpunk 2077',
 		'Developer': 'CD Projekt Red',
-		'Publisher': 'CD Projekt'
+		'Publisher': 'CD Projekt',
+		'Car':1
 	},
 	{
 		'ID': 6,
 		'Name': 'Titanfall 2',
 		'Developer': 'Respawn Entertainment',
-		'Publisher': 'Electronic Arts'
+		'Publisher': 'Electronic Arts',
+		'Car':1
 	}
 ]
 
@@ -53,40 +60,79 @@ def hello():
 #Info about games in stock by ID
 @app.route('/games_instock/<int:game_id>', methods=['GET'])
 def getGame(game_id):
-	game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
-	if(game):
-		return jsonify(game)
+	if( request.args.get('embedded','') == "car"):
+			embGames = copy.deepcopy(games_instock)
+			try:
+				req = request.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
+				req = json.loads(req.text)
+				embGames[int(game_id)]['Car'] = req
+			except request.exceptions.RequestException as e:
+				embGames[int(game_id)]['Car'] = 'null'
+			return jsonify(embGames[int(game_id)]),200
 	else:
-		return "Not found ID!",404
+		game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
+		if(game):
+			return jsonify(game),200
+		else:
+			return "Not found ID!",404
 
 #Info about games in stock
 @app.route('/games_instock',methods=['GET'])
 def getGames():
-	return jsonify({'Games':games_instock})
+	if( request.args.get('embedded','') == "car"):
+			embGames = copy.deepcopy(games_instock)
+			for i in range(0,len(games_instock)):
+				try:
+					req = request.get('http://web2:81/cars/'+embGames[i]['Car'])
+					req = json.loads(req.text)
+					embGames[i]['Car'] = req
+				except request.exceptions.RequestException as e:
+					embGames[i]['Car'] = 'null'
+			return jsonify(embGames[int(game_id)]),200
+	else:
+		return jsonify({'Games':games_instock}), 200
 
 #Delete game
 @app.route('/games_instock/<int:game_id>', methods=['DELETE'])
 def deleteGame(game_id):
 	game = [game for game in games_instock if game['ID'] == game_id]
 	games_instock.remove(game[0])
-	return getGames(),200 
+	return getGames(),200
 
-#Add new game 
+#Add new game
 @app.route('/games_instock', methods=['POST'])
 def addNewGame():
 	if not request.json:
 		abort(400)
-	if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
-		game={
-			'ID': games_instock[-1]['ID'] +1,
-			'Name': request.json['Name'],
-			'Developer': request.json['Developer'],
-			'Publisher': request.json['Publisher']
-		}
-		games_instock.append(game)
-		return getGame(games_instock[-1]['ID']),201
+	if(request.args.get('embedded','') == 'car'):
+		car = request.json['Car']
+		req = request.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
+		req = json.loads(req.text)
+		if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
+			game={
+				'ID': games_instock[-1]['ID'] +1,
+				'Name': request.json['Name'],
+				'Developer': request.json['Developer'],
+				'Publisher': request.json['Publisher'],
+				'Car':req['id']
+			}
+			games_instock.append(game)
+			return getGame(games_instock[-1]['ID']),201
+		else:
+			return "Bad JSON request",400
 	else:
-		return "Bad JSON request",400
+		if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
+			game={
+				'ID': games_instock[-1]['ID'] +1,
+				'Name': request.json['Name'],
+				'Developer': request.json['Developer'],
+				'Publisher': request.json['Publisher'],
+				'Car': request.json['Car']
+			}
+			games_instock.append(game)
+			return getGame(games_instock[-1]['ID']),201
+		else:
+			return "Bad JSON request",400
 #Patching game
 @app.route('/games_instock/<int:game_id>', methods=['PATCH'])
 def patGame(game_id):
@@ -119,10 +165,20 @@ def modGame(game_id):
 			game[0]['Publisher'] = request.json['Publisher']
 		else:
 			game[0].pop('Publisher',None)
+		if 'Car' in request.json:
+			game[0]['Car'] = request.json['Car']
+		else:
+			game[0].pop('Car',None)
 		return jsonify({'Modified':game[0]}),200
 	else:
 		return "Not found",404
 
+#Modifie info
+@app.route('/games_instock/<int:game_id>/car',methods=['PUT'])
+def modInfo(game_id):
+	req = request.put('http://web2:81/cars/'+games_instock[int(game_id)]['Car'],json = {"id":request.json.get('id',1),"vin":request.json['vin'],"brand":request.json['brand'],"model":request.json['model'],"year":request.json['year'],"fuel_type":request.json['fuel_type'],"engine_volume":request.json["engine_volume"],"trim":request.json['trim'],"price":request.json['price'],"owner":request.json['owner']})
+	req = json.loads(req.text)
+	return jsonify(req),200
 
 if __name__== "__main__":
 	app.run(host="0.0.0.0", debug=True)
