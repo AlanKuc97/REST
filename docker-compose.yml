@@ -1,11 +1,18 @@
-web:
-  build: .
-  command: python app.py
-  ports:
-    - "80:5000"
-  volumes:
-    - .:/code
-  links:
-    - redis
-redis:
-  image: redis 
+services:
+  web2:
+    build: ./secondService
+    command: python ./secondService/app.py runserver 0.0.0.0:81
+    ports:
+      - "81:5000"
+    volumes:
+      - .:/code
+
+  web:
+    build: .
+    command: python app.py
+    ports:
+      - "80:5000"
+    volumes:
+      - .:/code
+    links:
+      - web2
