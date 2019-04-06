@@ -12,42 +12,42 @@ games_instock = [
 		'Name': 'Assassin\'s Creed 3 ',
 		'Developer': 'Ubisoft Montreal',
 		'Publisher': 'Ubisoft',
-		'Car':1
+		'Car': '1'
 	},
 	{
 		'ID': 2,
 		'Name': 'Need for Speed',
 		'Developer': 'Ghost Games',
 		'Publisher': 'Electronic Arts',
-		'Car':2
+		'Car': '2'
 	},
 	{
 		'ID': 3,
 		'Name': 'Call of Duty: WWII',
 		'Developer': 'Sledgehammer Games',
 		'Publisher': 'Activision Blizzard',
-		'Car':3
+		'Car': '3'
 	},
 	{
 		'ID': 4,
 		'Name': 'Wolfenstein II: The New Colossus',
 		'Developer': 'MachineGames',
 		'Publisher': 'Bethesda Softworks',
-		'Car': 1
+		'Car': '1'
 	},
 	{
 		'ID': 5,
 		'Name': 'Cyberpunk 2077',
 		'Developer': 'CD Projekt Red',
 		'Publisher': 'CD Projekt',
-		'Car':1
+		'Car': '1'
 	},
 	{
 		'ID': 6,
 		'Name': 'Titanfall 2',
 		'Developer': 'Respawn Entertainment',
 		'Publisher': 'Electronic Arts',
-		'Car':1
+		'Car': '1'
 	}
 ]
 
@@ -63,7 +63,7 @@ def getGame(game_id):
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
 			try:
-				req = request.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
+				req = requests.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
 				req = json.loads(req.text)
 				embGames[int(game_id)]['Car'] = req
 			except request.exceptions.RequestException as e:
@@ -82,13 +82,13 @@ def getGames():
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
 			for i in range(0,len(games_instock)):
-				try:
-					req = request.get('http://web2:81/cars/'+embGames[i]['Car'])
-					req = json.loads(req.text)
-					embGames[i]['Car'] = req
-				except request.exceptions.RequestException as e:
-					embGames[i]['Car'] = 'null'
-			return jsonify(embGames[int(game_id)])
+				#try:
+				req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
+				req = json.loads(req.text)
+				embGames[int(i)]['Car'] = req
+				#except request.exceptions.RequestException as e:
+				#	embGames[i]['Car'] = 'null'
+			return jsonify(embGames)
 	else:
 		return jsonify({'Games':games_instock})
 
@@ -106,7 +106,7 @@ def addNewGame():
 		abort(400)
 	if(request.args.get('embedded','') == 'car'):
 		car = request.json['Car']
-		req = request.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
+		req = requests.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
 		req = json.loads(req.text)
 		if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
 			game={

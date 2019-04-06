@@ -26,3 +26,19 @@ DELETE https://193.219.91.103:14569/games_instock/<ID (int)>	#By delault 1-6
 #hello()
 URL: https://193.219.91.103:14569
 
+	{
+		"Name": "Assassins Creed 3",
+		"Developer": "Ubisoft Montreal",
+		"Publisher": "Ubisoft",
+		"Car":{
+			"vin":"WAUZZZ3161F037877",
+			"brand":"Audi",
+			"model":"A6",
+			"year":"2010",
+			"fuel_type":"Dyzelinas",
+			"engine_volume":"3.0",
+			"trim":"S-Line",
+			"price":"15000.00",
+			"owner":4
+		}
+	}
