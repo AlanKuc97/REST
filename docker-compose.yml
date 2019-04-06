@@ -1,7 +1,9 @@
+version: '2'
+
 services:
   web2:
     build: ./secondService
-    command: python ./secondService/app.py runserver 0.0.0.0:81
+    command: python ./secondService/cars.py runserver 0.0.0.0:81
     ports:
       - "81:5000"
     volumes:

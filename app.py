@@ -1,11 +1,11 @@
+#!/usr/bin/env python
 from flask import Flask, jsonify, abort, request
-from redis import Redis
-import request
 import os
 import copy
+import json
+import re
+import requests
 app = Flask(__name__)
-redis = Redis(host='redis', port =6379)
-
 games_instock = [
 	{
 		'ID': 1,
@@ -54,8 +54,8 @@ games_instock = [
 #Hello function (introducing)
 @app.route('/')
 def hello():
-	redis.incr('counter')
-	return 'Hello. This service provides information about games in stock. We see you %s time.' %redis.get('counter')
+	#redis.incr('counter')
+	return 'Hello. This service provides information about games in stock.'
 
 #Info about games in stock by ID
 @app.route('/games_instock/<int:game_id>', methods=['GET'])
@@ -88,9 +88,9 @@ def getGames():
 					embGames[i]['Car'] = req
 				except request.exceptions.RequestException as e:
 					embGames[i]['Car'] = 'null'
-			return jsonify(embGames[int(game_id)]),200
+			return jsonify(embGames[int(game_id)])
 	else:
-		return jsonify({'Games':games_instock}), 200
+		return jsonify({'Games':games_instock})
 
 #Delete game
 @app.route('/games_instock/<int:game_id>', methods=['DELETE'])
