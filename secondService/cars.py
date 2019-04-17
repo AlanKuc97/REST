@@ -217,19 +217,19 @@ def createCar():
 	
 	data = request.get_json()
 
-        if 'brand' in request.json :
-               	data['brand'] = request.json['brand']
+    if 'brand' in request.json :
+        data['brand'] = request.json['brand']
 	else:
 		return "No Brand given", 400
-       	if 'model' in request.json:
-               	data['model'] = request.json['model']
+    if 'model' in request.json:
+        data['model'] = request.json['model']
 	else:
 		return "No model given", 400
 
 	data['id'] = Cars[-1]['id']+1
 
-    	Cars.append(data)
-    	return jsonify(data),201
+    Cars.append(data)
+    return jsonify(data),201
 
 @app.route('/cars/<int:carId>',methods=['DELETE'])
 def deleteCar(carId):
