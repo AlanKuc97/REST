@@ -115,7 +115,7 @@ def addNewGame():
 				'Name': request.json['Name'],
 				'Developer': request.json['Developer'],
 				'Publisher': request.json['Publisher'],
-				'Car':req['id']
+				'Car':str(req['id'])
 			}
 			games_instock.append(game)
 			return jsonify(game),201
