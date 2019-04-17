@@ -63,9 +63,9 @@ def getGame(game_id):
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
 			#try:
-			req = requests.get('http://web2:81/cars/'+embGames[int(game_id)-1]['Car'])
+			req = requests.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
 			req = json.loads(req.text)
-			embGames[int(game_id)-1]['Car'] = req
+			embGames[int(game_id)]['Car'] = req
 			#except request.exceptions.RequestException as e:
 			#	embGames[int(game_id)]['Car'] = 'null'
 			return jsonify(embGames[int(game_id)]),200
