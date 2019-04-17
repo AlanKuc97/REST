@@ -82,15 +82,15 @@ def getGames():
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
 			for i in range(0,len(games_instock)):
-				#try:
-				req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
-				req = json.loads(req.text)
-				embGames[int(i)]['Car'] = req
-				#except request.exceptions.RequestException as e:
-				#	embGames[i]['Car'] = 'null'
-			return jsonify(embGames)
+				try:
+					req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
+					req = json.loads(req.text)
+					embGames[int(i)]['Car'] = req
+				except request.exceptions.RequestException as e:
+					embGames[i]['Car'] = 'null'
+			return jsonify(embGames),200
 	else:
-		return jsonify({'Games':games_instock})
+		return jsonify({'Games':games_instock}),200
 
 #Delete game
 @app.route('/games_instock/<int:game_id>', methods=['DELETE'])
