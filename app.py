@@ -109,7 +109,6 @@ def addNewGame():
 		#req = requests.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
 		req = requests.post('http://web2:81/cars',json = {"brand":car['brand'],"model":car['model']})
 		req = json.loads(req.text)
-		print req 
 		if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
 			game={
 				'ID': games_instock[-1]['ID'] +1,
@@ -119,7 +118,7 @@ def addNewGame():
 				'Car':req['id']
 			}
 			games_instock.append(game)
-			return getGame(games_instock[-1]['ID']),201
+			return jsonify(game),201
 		else:
 			return "Bad JSON request",400
 	else:
@@ -132,7 +131,7 @@ def addNewGame():
 				'Car': request.json['Car']
 			}
 			games_instock.append(game)
-			return getGame(games_instock[-1]['ID']),201
+			return jsonify(game),201
 		else:
 			return "Bad JSON request",400
 #Patching game
