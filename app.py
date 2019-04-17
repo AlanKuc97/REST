@@ -106,7 +106,8 @@ def addNewGame():
 		abort(400)
 	if(request.args.get('embedded','') == 'car'):
 		car = request.json['Car']
-		req = requests.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
+		#req = requests.post('http://web2:81/cars',json = {"vin":car['vin'],"brand":car['brand'],"model":car['model'],"year":car['year'],"fuel_type":car['fuel_type'],"engine_volume":car["engine_volume"],"trim":car['trim'],"price":car['price'],"owner":car['owner']})
+		req = requests.post('http://web2:81/cars',json = {"brand":car['brand'],"model":car['model']})
 		req = json.loads(req.text)
 		if 'Name' in request.json and 'Developer' in request.json and 'Publisher' in request.json:
 			game={
