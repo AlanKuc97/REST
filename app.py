@@ -82,12 +82,12 @@ def getGames():
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
 			for i in range(0,len(games_instock)):
-				#try:
-				req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
-				req = json.loads(req.text)
-				embGames[int(i)]['Car'] = req
-				#except request.exceptions.RequestException as e:
-				#	embGames[i]['Car'] = 'null'
+				try:
+					req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
+					req = json.loads(req.text)
+					embGames[int(i)]['Car'] = req
+				except request.exceptions.RequestException as e:
+					embGames[i]['Car'] = 'null'
 			return jsonify(embGames),200
 	else:
 		return jsonify({'Games':games_instock}),200
@@ -145,6 +145,8 @@ def patGame(game_id):
 			game[0]['Developer'] = request.json['Developer']
 		if 'Publisher' in request.json:
 			game[0]['Publisher'] = request.json['Publisher']
+		if 'Car' in request.json:
+			game[0]['Car'] = request.json['Car']
 		return jsonify({'Modified': game[0]}),200
 	else:
 		return "Bad ID",404
@@ -173,6 +175,13 @@ def modGame(game_id):
 		return jsonify({'Modified':game[0]}),200
 	else:
 		return "Not found",404
+
+#Patching car
+#@app.route('/games_instock/<int:game_id>/car', methods=['PATCH'])
+#def patCar(game_id):
+#	req = requests.patch('http://web2:81/cars/'+games_instock[int(game_id)]['Car'],json = {"id":request.json.get('id',1),"vin":request.json['vin'],"brand":request.json['brand'],"model":request.json['model'],"year":request.json['year'],"fuel_type":request.json['fuel_type'],"engine_volume":request.json["engine_volume"],"trim":request.json['trim'],"price":request.json['price']})
+#	req = json.loads(req.text)
+#	return jsonify(req),200
 
 #Modifie info
 @app.route('/games_instock/<int:game_id>/car',methods=['PUT'])
