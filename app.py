@@ -177,7 +177,7 @@ def modGame(game_id):
 #Modifie info
 @app.route('/games_instock/<int:game_id>/car',methods=['PUT'])
 def modInfo(game_id):
-	req = request.put('http://web2:81/cars/'+games_instock[int(game_id)]['Car'],json = {"id":request.json.get('id',1),"vin":request.json['vin'],"brand":request.json['brand'],"model":request.json['model'],"year":request.json['year'],"fuel_type":request.json['fuel_type'],"engine_volume":request.json["engine_volume"],"trim":request.json['trim'],"price":request.json['price']})
+	req = requests.put('http://web2:81/cars/'+games_instock[int(game_id)]['Car'],json = {"id":request.json.get('id',1),"vin":request.json['vin'],"brand":request.json['brand'],"model":request.json['model'],"year":request.json['year'],"fuel_type":request.json['fuel_type'],"engine_volume":request.json["engine_volume"],"trim":request.json['trim'],"price":request.json['price']})
 	req = json.loads(req.text)
 	return jsonify(req),200
 
