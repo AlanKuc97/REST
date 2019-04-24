@@ -8,35 +8,35 @@ URL: https://193.219.91.103:14569
 
 #GET 
 In Postman:
-GET https://193.219.91.103:14569/games_instock
+GET 193.219.91.103:14569/games_instock
 
 #GET by id 
 In Postman:
-GET https://193.219.91.103:14569/games_instock/<ID (int)>	#By default 1-6
+GET 193.219.91.103:14569/games_instock/<ID (int)>	#By default 1-6
 
 #POST
 In Postman:
 Need to set up JSON/application, in BODY write new game in JSON format
-POST https://193.219.91.103:14569/games_instock
+POST 193.219.91.103:14569/games_instock
 
 #PUT
 In Postman:
-PUT https://193.219.91.103:14569/games_instock/<ID (int)>	#By default 1-6
+PUT 193.219.91.103:14569/games_instock/<ID (int)>	#By default 1-6
 In BODY write JSON file.
 
 #DELETE
 In Postman:
-DELETE https://193.219.91.103:14569/games_instock/<ID (int)>	#By delault 1-6
+DELETE 193.219.91.103:14569/games_instock/<ID (int)>	#By delault 1-6
 
 ###2 task
 
 #GET 
 In Postman:
-GET https://193.219.91.103:14569/games_instock?embedded=car
+GET 193.219.91.103:14569/games_instock?embedded=car
 
 #GET by id 
 In Postman:
-GET https://193.219.91.103:14569/games_instock/<INT ID>?embedded=car	#By default 0-5
+GET 193.219.91.103:14569/games_instock/<INT ID>?embedded=car	#By default 0-5
 
 #POST
 In Postman:
@@ -56,7 +56,7 @@ Need to set up JSON/application, in BODY write new game in JSON format:
         "price":"15000.00"
     }
 }
-POST https://193.219.91.103:14569/games_instock
+POST 193.219.91.103:14569/games_instock
 
 #PUT
 In Postman:
@@ -67,4 +67,19 @@ Need to set up JSON/application, in BODY write new game in JSON format:
     "Publisher": "Ubisoft",
     "Car": "3"
 }
-PUT https://193.219.91.103:14569/games_instock/1
+PUT 193.219.91.103:14569/games_instock/1
+
+#PUT to change car
+In Postman:
+Need to set up JSON/application, in BODY write new game in JSON format:
+{
+    "vin":"WDB2093161F037877",
+    "brand":"Mercedes",
+    "model":"CLS",
+    "year":"2013",
+    "fuel_type":"Benzinas",
+    "engine_volume":"3.0",
+    "trim":"Elegance",
+    "price":"38000.00"
+}
+PUT 193.219.91.103:14569/games_instock/2/car #By default 1-5
