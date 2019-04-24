@@ -62,12 +62,12 @@ def hello():
 def getGame(game_id):
 	if( request.args.get('embedded','') == "car"):
 			embGames = copy.deepcopy(games_instock)
-			#try:
-			req = requests.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
-			req = json.loads(req.text)
-			embGames[int(game_id)]['Car'] = req
-			#except request.exceptions.RequestException as e:
-			#	embGames[int(game_id)]['Car'] = 'null'
+			try:
+				req = requests.get('http://web2:81/cars/'+embGames[int(game_id)]['Car'])
+				req = json.loads(req.text)
+				embGames[int(game_id)]['Car'] = req
+			except requests.exceptions.RequestException as e:
+				embGames[int(game_id)]['Car'] = 'null'
 			return jsonify(embGames[int(game_id)]),200
 	else:
 		game = [gametmp for gametmp in games_instock if (gametmp['ID'] == game_id)]
@@ -86,7 +86,7 @@ def getGames():
 					req = requests.get('http://web2:81/cars/'+embGames[i]['Car'])
 					req = json.loads(req.text)
 					embGames[int(i)]['Car'] = req
-				except request.exceptions.RequestException as e:
+				except requests.exceptions.RequestException as e:
 					embGames[i]['Car'] = 'null'
 			return jsonify(embGames),200
 	else:
